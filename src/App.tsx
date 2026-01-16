@@ -6,7 +6,7 @@ const USER_BG = "#ffd9e9";
 const BOT_TEXT = "#464646";
 
 // API endpoint - update this to match your backend URL
-const API_URL = 'http://localhost:5000/api/chat';
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface Message {
   id: string;
