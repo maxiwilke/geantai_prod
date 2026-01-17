@@ -5,14 +5,15 @@ const PRIMARY = "#810947";
 const USER_BG = "#ffd9e9";
 const BOT_TEXT = "#464646";
 
-// API endpoint - update this to match your backend URL
-const API_URL = import.meta.env.VITE_API_URL;
+// FIXED: Update this to your Render backend URL
+const API_BASE_URL = 'https://geant-rag.onrender.com';
+const API_URL = `${API_BASE_URL}/api/chat`;
 
 interface Message {
   id: string;
   text: string;
   sender: 'user' | 'bot';
-  sources?: string[];
+  sources?: Array<{ name: string; url?: string }>;
 }
 
 const GeantChatbot: React.FC = () => {
@@ -40,7 +41,7 @@ const GeantChatbot: React.FC = () => {
     setMessages((prev: Message[]) => [...prev, { id: generateId(), text, sender: 'user' }]);
   };
 
-  const addBotMessage = (text: string, sources?: string[]): void => {
+  const addBotMessage = (text: string, sources?: Array<{ name: string; url?: string }>): void => {
     setMessages((prev: Message[]) => [...prev, { id: generateId(), text, sender: 'bot', sources }]);
   };
 
@@ -64,14 +65,16 @@ const GeantChatbot: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get response from server');
+        const errorText = await response.text();
+        console.error('Server response:', errorText);
+        throw new Error(`Server error: ${response.status}`);
       }
 
       const data = await response.json();
       addBotMessage(data.answer, data.sources);
     } catch (error) {
       console.error('Error calling LLM:', error);
-      addBotMessage('Sorry, I encountered an error processing your request. Please make sure the backend server is running.');
+      addBotMessage('Sorry, I encountered an error processing your request. Please try again.');
     } finally {
       setIsThinking(false);
     }
@@ -230,28 +233,56 @@ const GeantChatbot: React.FC = () => {
               {msg.sources && msg.sources.length > 0 && (
                 <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', maxWidth: '600px', justifyContent: 'flex-start' }}>
                   {msg.sources.slice(0, 3).map((source, idx) => (
-                    <button
-                      key={idx}
-                      style={{
-                        padding: '8px 16px',
-                        borderRadius: '999px',
-                        border: `2px solid ${PRIMARY}`,
-                        background: USER_BG,
-                        color: PRIMARY,
-                        fontSize: '16px',
-                        textAlign: 'left',
-                        whiteSpace: 'nowrap',
-                        flexShrink: 0,
-                        cursor: 'pointer',
-                        fontWeight: 500,
-                        transition: 'opacity 0.2s',
-                        opacity: 1
-                      }}
-                      onMouseOver={(e) => (e.currentTarget.style.opacity = '0.85')}
-                      onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
-                    >
-                      Source: {source}
-                    </button>
+                    source.url ? (
+                      <a
+                        key={idx}
+                        href={source.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          padding: '8px 16px',
+                          borderRadius: '999px',
+                          border: `2px solid ${PRIMARY}`,
+                          background: USER_BG,
+                          color: PRIMARY,
+                          fontSize: '16px',
+                          textAlign: 'left',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                          cursor: 'pointer',
+                          fontWeight: 500,
+                          transition: 'opacity 0.2s',
+                          opacity: 1,
+                          textDecoration: 'none',
+                          display: 'inline-block'
+                        }}
+                        onMouseOver={(e) => (e.currentTarget.style.opacity = '0.85')}
+                        onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
+                        title={`Open: ${source.url}`}
+                      >
+                        Source: {source.name}
+                      </a>
+                    ) : (
+                      <button
+                        key={idx}
+                        style={{
+                          padding: '8px 16px',
+                          borderRadius: '999px',
+                          border: `2px solid ${PRIMARY}`,
+                          background: USER_BG,
+                          color: PRIMARY,
+                          fontSize: '16px',
+                          textAlign: 'left',
+                          whiteSpace: 'nowrap',
+                          flexShrink: 0,
+                          cursor: 'default',
+                          fontWeight: 500,
+                          opacity: 0.6
+                        }}
+                      >
+                        Source: {source.name}
+                      </button>
+                    )
                   ))}
                 </div>
               )}
