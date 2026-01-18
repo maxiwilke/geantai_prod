@@ -6,8 +6,8 @@ const USER_BG = "#ffd9e9";
 const BOT_TEXT = "#464646";
 
 // FIXED: Update this to your Render backend URL
-const API_BASE_URL = 'https://geant-rag.onrender.com';
-const API_URL = `${API_BASE_URL}/api/chat`;
+const API_BASE_URL = import.meta.env.VITE_API_URL?.replace('/api/chat', '') || 'https://geant-rag.onrender.com';
+const API_URL = import.meta.env.VITE_API_URL || 'https://geant-rag.onrender.com/api/chat';
 
 interface Message {
   id: string;
