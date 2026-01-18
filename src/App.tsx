@@ -55,30 +55,46 @@ const GeantChatbot: React.FC = () => {
   };
 
   const callLLM = async (question: string): Promise<void> => {
-    try {
-      const response = await fetch(API_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: question }),
-      });
+  try {
+    console.log('Sending request to:', API_URL);
+    console.log('Request body:', { message: question });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Server response:', errorText);
-        throw new Error(`Server error: ${response.status}`);
-      }
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      mode: 'cors', // Explicitly set CORS mode
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json', // Add Accept header
+      },
+      body: JSON.stringify({ message: question }),
+    });
 
-      const data = await response.json();
-      addBotMessage(data.answer, data.sources);
-    } catch (error) {
-      console.error('Error calling LLM:', error);
-      addBotMessage('Sorry, I encountered an error processing your request. Please try again.');
-    } finally {
-      setIsThinking(false);
+    console.log('Response status:', response.status);
+    console.log('Response headers:', response.headers);
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Server response:', errorText);
+      throw new Error(`Server error: ${response.status} - ${errorText}`);
     }
-  };
+
+    const data = await response.json();
+    console.log('Response data:', data);
+    
+    addBotMessage(data.answer, data.sources);
+  } catch (error) {
+    console.error('Error calling LLM:', error);
+    
+    // More specific error messages
+    if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+      addBotMessage('❌ Cannot connect to server. Please check:\n1. Is the backend deployed and running?\n2. Is the URL correct?\n3. Check browser console for CORS errors.');
+    } else {
+      addBotMessage('Sorry, I encountered an error processing your request. Please try again.');
+    }
+  } finally {
+    setIsThinking(false);
+  }
+};
 
   const handleSend = (text: string): void => {
     if (!text.trim()) return;
