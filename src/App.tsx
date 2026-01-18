@@ -6,7 +6,13 @@ const USER_BG = "#ffd9e9";
 const BOT_TEXT = "#464646";
 
 // FIXED: Update this to your Render backend URL
-const API_URL = import.meta.env.VITE_API_URL || 'https://geant-rag.onrender.com/api/chat';
+const API_URL = "https://rag-api-772832583543.europe-west1.run.app";
+
+const response = await fetch(`${API_URL}/api/chat`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message: "Hello", session_id: "test" }),
+});
 
 
 interface Message {
