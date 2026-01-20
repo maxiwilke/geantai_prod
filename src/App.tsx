@@ -6,7 +6,7 @@ const USER_BG = "#ffd9e9";
 const BOT_TEXT = "#464646";
 
 // API endpoint - update this to match your backend URL
-const API_URL = 'https://rag-api-772832583543.europe-west1.run.app/api/chat';
+const API_URL = 'http://localhost:5000/api/chat';
 
 interface Message {
   id: string;
@@ -53,35 +53,29 @@ const GeantChatbot: React.FC = () => {
     setShowButtons(true);
   };
 
-    const callLLM = async (question: string): Promise<void> => {
+  const callLLM = async (question: string): Promise<void> => {
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          message: question,
-          session_id: 'frontend'
-        }),
+        body: JSON.stringify({ message: question }),
       });
-  
+
       if (!response.ok) {
         throw new Error('Failed to get response from server');
       }
-  
+
       const data = await response.json();
       addBotMessage(data.answer, data.sources);
     } catch (error) {
       console.error('Error calling LLM:', error);
-      addBotMessage(
-        'Sorry, I encountered an error processing your request. Please make sure the backend server is running.'
-      );
+      addBotMessage('Sorry, I encountered an error processing your request. Please make sure the backend server is running.');
     } finally {
       setIsThinking(false);
     }
   };
-
 
   const handleSend = (text: string): void => {
     if (!text.trim()) return;
@@ -263,7 +257,7 @@ const GeantChatbot: React.FC = () => {
                         onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
                         title={`Open: ${source.url}`}
                       >
-                        Source: {source.name}
+                        {source.name}
                       </a>
                     ) : (
                       <button
@@ -283,7 +277,7 @@ const GeantChatbot: React.FC = () => {
                           opacity: 0.6
                         }}
                       >
-                        Source: {source.name}
+                        {source.name}
                       </button>
                     )
                   ))}
