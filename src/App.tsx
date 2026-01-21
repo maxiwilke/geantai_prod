@@ -1,3 +1,13 @@
+import React, { useState, useEffect, useRef } from 'react';
+import headerLogo from './assets/geantIcon.png';
+
+const PRIMARY = "#810947";
+const USER_BG = "#ffd9e9";
+const BOT_TEXT = "#464646";
+
+// API endpoint - update this to match your backend URL
+const API_URL = 'https://rag-api-772832583543.europe-west1.run.app/api/chat';
+
 interface Message {
   id: string;
   text: string;
