@@ -1,13 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
-import headerLogo from './assets/geantIcon.png';
-
-const PRIMARY = "#810947";
-const USER_BG = "#ffd9e9";
-const BOT_TEXT = "#464646";
-
-// API endpoint - update this to match your backend URL
-const API_URL = 'https://rag-api-772832583543.europe-west1.run.app/api/chat';
-
 interface Message {
   id: string;
   text: string;
@@ -199,137 +189,140 @@ const GeantChatbot: React.FC = () => {
         </div>
 
         {/* Messages */}
-        <div style={{ overflowY: 'auto', padding: '16px', background: '#fff', display: 'flex', flexDirection: 'column' }}>
-          {messages.map((msg: Message) => (
-            <div key={msg.id}>
-              <div
-                style={{
-                  display: 'flex',
-                  marginBottom: '12px',
-                  justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start'
-                }}
-              >
-                <div
-                  style={{
-                    maxWidth: '70%',
-                    padding: '10px 14px',
-                    borderRadius: '18px',
-                    fontSize: '18px',
-                    lineHeight: '1.35',
-                    whiteSpace: 'pre-wrap',
-                    wordWrap: 'break-word',
-                    background: msg.sender === 'user' ? USER_BG : '#fff',
-                    color: msg.sender === 'user' ? PRIMARY : BOT_TEXT,
-                    border: msg.sender === 'bot' ? '1px solid rgba(70,70,70,0.12)' : 'none'
-                  }}
-                >
-                  {msg.text}
-                </div>
-              </div>
-              {/* Sources */}
-              {msg.sources && msg.sources.length > 0 && (
-                <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', maxWidth: '600px', justifyContent: 'flex-start' }}>
-                  {msg.sources.slice(0, 3).map((source, idx) => (
-                    source.url ? (
-                      <a
-                        key={idx}
-                        href={source.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          padding: '8px 16px',
-                          borderRadius: '999px',
-                          border: `2px solid ${PRIMARY}`,
-                          background: USER_BG,
-                          color: PRIMARY,
-                          fontSize: '16px',
-                          textAlign: 'left',
-                          whiteSpace: 'nowrap',
-                          flexShrink: 0,
-                          cursor: 'pointer',
-                          fontWeight: 500,
-                          transition: 'opacity 0.2s',
-                          opacity: 1,
-                          textDecoration: 'none',
-                          display: 'inline-block'
-                        }}
-                        onMouseOver={(e) => (e.currentTarget.style.opacity = '0.85')}
-                        onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
-                        title={`Open: ${source.url}`}
-                      >
-                        {source.name}
-                      </a>
-                    ) : (
-                      <button
-                        key={idx}
-                        style={{
-                          padding: '8px 16px',
-                          borderRadius: '999px',
-                          border: `2px solid ${PRIMARY}`,
-                          background: USER_BG,
-                          color: PRIMARY,
-                          fontSize: '16px',
-                          textAlign: 'left',
-                          whiteSpace: 'nowrap',
-                          flexShrink: 0,
-                          cursor: 'default',
-                          fontWeight: 500,
-                          opacity: 0.6
-                        }}
-                      >
-                        {source.name}
-                      </button>
-                    )
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-
-          {isThinking && (
-            <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '12px', marginTop: '12px' }}>
-              <div style={{ padding: '14px', borderRadius: '18px', background: USER_BG, border: 'none', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <span className="dot-left" style={{ width: '10px', height: '10px', borderRadius: '999px', background: PRIMARY, display: 'inline-block' }}></span>
-                <span className="dot-middle" style={{ width: '10px', height: '10px', borderRadius: '999px', background: PRIMARY, display: 'inline-block' }}></span>
-                <span className="dot-right" style={{ width: '10px', height: '10px', borderRadius: '999px', background: PRIMARY, display: 'inline-block' }}></span>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
+<div style={{ overflowY: 'auto', padding: '16px', background: '#fff', display: 'flex', flexDirection: 'column' }}>
+  {messages.map((msg: Message) => (
+    <div key={msg.id}>
+      <div
+        style={{
+          display: 'flex',
+          marginBottom: '12px',
+          justifyContent: msg.sender === 'user' ? 'flex-end' : 'flex-start'
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '70%',
+            padding: '10px 14px',
+            borderRadius: '18px',
+            fontSize: '18px',
+            lineHeight: '1.35',
+            whiteSpace: 'pre-wrap',
+            wordWrap: 'break-word',
+            background: msg.sender === 'user' ? USER_BG : '#fff',
+            color: msg.sender === 'user' ? PRIMARY : BOT_TEXT,
+            border: msg.sender === 'bot' ? '1px solid rgba(70,70,70,0.12)' : 'none'
+          }}
+        >
+          {msg.text}
         </div>
+      </div>
 
-        {/* Recommendation Buttons */}
-        {showButtons && !isThinking && (
-          <div style={{ padding: '16px', paddingTop: '0' }}>
-            {recommendations.map((rec: string, i: number) => (
-              <button
-                key={i}
-                onClick={() => handleRecommendation(rec)}
+      {/* Sources */}
+      {msg.sources && msg.sources.length > 0 && (
+        <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '8px', maxWidth: '600px', justifyContent: 'flex-start' }}>
+          {msg.sources.slice(0, 5).map((source, idx) => {
+            const displayName = source.name.length > 30 ? source.name.slice(0, 30) + "..." : source.name;
+
+            return source.url ? (
+              <a
+                key={idx}
+                href={source.url}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={{
-                  width: '100%',
-                  textAlign: 'left',
-                  padding: '12px 18px',
-                  marginBottom: '8px',
+                  padding: '8px 16px',
                   borderRadius: '999px',
                   border: `2px solid ${PRIMARY}`,
                   background: USER_BG,
                   color: PRIMARY,
-                  fontWeight: 700,
                   fontSize: '16px',
+                  textAlign: 'left',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
                   cursor: 'pointer',
-                  opacity: 1,
+                  fontWeight: 500,
                   transition: 'opacity 0.2s',
-                  display: 'inline-block',
-                  maxWidth: 'fit-content'
+                  opacity: 1,
+                  textDecoration: 'none',
+                  display: 'inline-block'
                 }}
-                onMouseOver={(e) => (e.currentTarget.style.opacity = '0.85')}
-                onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
+                title={`Open: ${source.url}`}
               >
-                {rec}
+                {displayName}
+              </a>
+            ) : (
+              <button
+                key={idx}
+                style={{
+                  padding: '8px 16px',
+                  borderRadius: '999px',
+                  border: `2px solid ${PRIMARY}`,
+                  background: USER_BG,
+                  color: PRIMARY,
+                  fontSize: '16px',
+                  textAlign: 'left',
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  cursor: 'default',
+                  fontWeight: 500,
+                  opacity: 0.6
+                }}
+              >
+                {displayName}
               </button>
-            ))}
-          </div>
-        )}
+            );
+          })}
+        </div>
+      )}
+    </div>
+  ))}  {/* <-- THIS closes messages.map */}
+
+  {isThinking && (
+    <div style={{ display: 'flex', justifyContent: 'flex-start', marginBottom: '12px', marginTop: '12px' }}>
+      <div style={{ padding: '14px', borderRadius: '18px', background: USER_BG, border: 'none', display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <span className="dot-left" style={{ width: '10px', height: '10px', borderRadius: '999px', background: PRIMARY, display: 'inline-block' }} />
+        <span className="dot-middle" style={{ width: '10px', height: '10px', borderRadius: '999px', background: PRIMARY, display: 'inline-block' }} />
+        <span className="dot-right" style={{ width: '10px', height: '10px', borderRadius: '999px', background: PRIMARY, display: 'inline-block' }} />
+      </div>
+    </div>
+  )}
+
+  <div ref={messagesEndRef} />
+</div>
+
+{/* Recommendation Buttons */}
+{showButtons && !isThinking && (
+  <div style={{ padding: '16px', paddingTop: '0' }}>
+    {recommendations.map((rec: string, i: number) => (
+      <button
+        key={i}
+        onClick={() => handleRecommendation(rec)}
+        style={{
+          width: '100%',
+          textAlign: 'left',
+          padding: '12px 18px',
+          marginBottom: '8px',
+          borderRadius: '999px',
+          border: `2px solid ${PRIMARY}`,
+          background: USER_BG,
+          color: PRIMARY,
+          fontWeight: 700,
+          fontSize: '16px',
+          cursor: 'pointer',
+          opacity: 1,
+          transition: 'opacity 0.2s',
+          display: 'inline-block',
+          maxWidth: 'fit-content'
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.opacity = '0.85')}
+        onMouseOut={(e) => (e.currentTarget.style.opacity = '1')}
+      >
+        {rec}
+      </button>
+    ))}
+  </div>
+)}
+
 
         {/* Input */}
         <div style={{ padding: '16px', borderTop: '2px solid #f9fafb', marginTop: 'auto' }}>
