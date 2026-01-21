@@ -6,7 +6,7 @@ const USER_BG = "#ffd9e9";
 const BOT_TEXT = "#464646";
 
 // API endpoint - update this to match your backend URL
-const API_URL = 'https://rag-api-772832583543.europe-west1.run.app/api/chat';
+const API_URL = 'http://localhost:5000/api/chat';
 
 interface Message {
   id: string;
@@ -119,9 +119,9 @@ const GeantChatbot: React.FC = () => {
   }
 
   const recommendations: string[] = [
-    "Please summarize the SURF case study for me",
-    "Show me the Annual Report of 2020",
-    "How many universities does GEANT collaborate with?"
+    "What are all the GN5-1 deliverables?",
+    "Name all the NRENs we are currently working with?",
+    "Who can I talk to about time and frequency services?"
   ];
 
   return (
