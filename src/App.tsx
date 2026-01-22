@@ -6,7 +6,7 @@ const USER_BG = "#ffd9e9";
 const BOT_TEXT = "#464646";
 
 // API endpoint - update this to match your backend URL
-const API_URL = 'https://geantai-rag-api-772832583543.europe-west1.run.app';
+const API_URL = 'https://geantai-rag-api-772832583543.europe-west1.run.app/api/chat';
 
 interface Message {
   id: string;
