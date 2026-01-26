@@ -119,9 +119,9 @@ const GeantChatbot: React.FC = () => {
   }
 
   const recommendations: string[] = [
-    "What are all the GN5-1 deliverables?",
+    "Can you summarize the GN5-1 project?",
     "Name all the NRENs we are currently working with",
-    "Show me the Gn1GN5-1 D22 Project Communications Strategy and Plan"
+    "Show me the GN5-1 D22 Communications Project"
   ];
 
   return (
